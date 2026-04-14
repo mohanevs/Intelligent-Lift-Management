@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Upload Mode | Intelligent Lift</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="main-page">
+  <div class="bg-glow"></div>
+
+  <header class="main-header">
+    <div class="logo">INTELLIGENT LIFT MANAGEMENT <span>| Upload Mode</span></div>
+    <a href="mode.html" class="back-link">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M19 12H5M12 19l-7-7 7-7" />
+      </svg>
+      Back to Modes
+    </a>
+  </header>
+
+  <main class="main-content">
+    <!-- Left Panel: 3 Floor Upload Windows -->
+    <div class="floors-panel">
+      <!-- 2nd Floor -->
+      <div class="floor-card" data-floor="2">
+        <div class="floor-header">
+          <span class="floor-number">2nd Floor</span>
+          <span class="floor-badge">Top</span>
+        </div>
+        <div class="upload-wrapper">
+          <div class="upload-placeholder" id="placeholder2">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="2" y="3" width="20" height="14" rx="2" />
+              <line x1="8" y1="21" x2="16" y2="21" />
+              <line x1="12" y1="17" x2="12" y2="21" />
+            </svg>
+            <p>Click to upload floor image</p>
+          </div>
+          <img id="preview2" class="upload-preview" style="display: none;">
+          <canvas id="canvas2" style="display: none;"></canvas>
+          <div class="upload-overlay" id="overlay2"></div>
+        </div>
+        <input type="file" id="upload2" accept="image/jpeg,image/png,image/jpg" style="display: none;">
+        <button class="upload-btn" data-floor="2">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="17 8 12 3 7 8" />
+            <line x1="12" y1="3" x2="12" y2="15" />
+          </svg>
+          Upload Image
+        </button>
+      </div>
+
+      <!-- 1st Floor -->
+      <div class="floor-card" data-floor="1">
+        <div class="floor-header">
+          <span class="floor-number">1st Floor</span>
+          <span class="floor-badge">Middle</span>
+        </div>
+        <div class="upload-wrapper">
+          <div class="upload-placeholder" id="placeholder1">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="2" y="3" width="20" height="14" rx="2" />
+              <line x1="8" y1="21" x2="16" y2="21" />
+              <line x1="12" y1="17" x2="12" y2="21" />
+            </svg>
+            <p>Click to upload floor image</p>
+          </div>
+          <img id="preview1" class="upload-preview" style="display: none;">
+          <canvas id="canvas1" style="display: none;"></canvas>
+          <div class="upload-overlay" id="overlay1"></div>
+        </div>
+        <input type="file" id="upload1" accept="image/jpeg,image/png,image/jpg" style="display: none;">
+        <button class="upload-btn" data-floor="1">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="17 8 12 3 7 8" />
+            <line x1="12" y1="3" x2="12" y2="15" />
+          </svg>
+          Upload Image
+        </button>
+      </div>
+
+      <!-- Ground Floor -->
+      <div class="floor-card" data-floor="0">
+        <div class="floor-header">
+          <span class="floor-number">Ground Floor</span>
+          <span class="floor-badge">Bottom</span>
+        </div>
+        <div class="upload-wrapper">
+          <div class="upload-placeholder" id="placeholder0">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="2" y="3" width="20" height="14" rx="2" />
+              <line x1="8" y1="21" x2="16" y2="21" />
+              <line x1="12" y1="17" x2="12" y2="21" />
+            </svg>
+            <p>Click to upload floor image</p>
+          </div>
+          <img id="preview0" class="upload-preview" style="display: none;">
+          <canvas id="canvas0" style="display: none;"></canvas>
+          <div class="upload-overlay" id="overlay0"></div>
+        </div>
+        <input type="file" id="upload0" accept="image/jpeg,image/png,image/jpg" style="display: none;">
+        <button class="upload-btn" data-floor="0">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="17 8 12 3 7 8" />
+            <line x1="12" y1="3" x2="12" y2="15" />
+          </svg>
+          Upload Image
+        </button>
+      </div>
+    </div>
+
+    <!-- Right Panel: Analysis Results -->
+    <div class="analysis-panel">
+      <div class="panel-header">
+        <h3>🧠 AI Analysis Results</h3>
+        <button id="analyzeBtn" class="analyze-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          ANALYZE ALL
+        </button>
+      </div>
+
+      <div id="priorityQueue" class="priority-queue">
+        <div class="placeholder">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="2" y="3" width="20" height="14" rx="2" />
+            <line x1="8" y1="21" x2="16" y2="21" />
+            <line x1="12" y1="17" x2="12" y2="21" />
+          </svg>
+          <p>No uploads yet. Upload images for each floor, then Analyze.</p>
+        </div>
+      </div>
+
+      <div id="modelPredictions" class="model-predictions">
+        <h4>YOLO Detection Output</h4>
+        <div class="prediction-content">—</div>
+      </div>
+
+      <div id="finalDecision" class="final-decision">
+        <h4>🎯 Final Decision (Serving Order)</h4>
+        <div class="decision-order">—</div>
+      </div>
+
+      <button id="simulateBtn" class="simulate-btn" disabled>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polygon points="5 3 19 12 5 21 5 3" />
+        </svg>
+        RUN SIMULATION
+      </button>
+    </div>
+  </main>
+
+  <script>
+    const API_URL = 'http://localhost:8000/predict';
+
+    let uploadedImages = { 0: null, 1: null, 2: null };
+    let analysisResult = null;
+
+    // Setup upload for each floor
+    for (let floor of [0, 1, 2]) {
+      const uploadBtn = document.querySelector(`.upload-btn[data-floor="${floor}"]`);
+      const fileInput = document.getElementById(`upload${floor}`);
+      const preview = document.getElementById(`preview${floor}`);
+      const placeholder = document.getElementById(`placeholder${floor}`);
+      const canvas = document.getElementById(`canvas${floor}`);
+      const overlay = document.getElementById(`overlay${floor}`);
+
+      uploadBtn.addEventListener('click', () => {
+        fileInput.click();
+      });
+
+      fileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            const imgData = event.target.result;
+
+            // Store the actual file blob for API
+            uploadedImages[floor] = file;
+
+            // Load image to canvas for preview
+            const img = new Image();
+            img.onload = () => {
+              canvas.width = img.width;
+              canvas.height = img.height;
+              const ctx = canvas.getContext('2d');
+              ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            };
+            img.src = imgData;
+
+            // Show preview
+            preview.src = imgData;
+            preview.style.display = 'block';
+            placeholder.style.display = 'none';
+
+            // Show overlay effect
+            overlay.style.opacity = '0.3';
+            setTimeout(() => {
+              overlay.style.opacity = '0';
+            }, 200);
+
+            // Visual feedback
+            uploadBtn.classList.add('uploaded');
+            uploadBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Uploaded!';
+            setTimeout(() => {
+              uploadBtn.classList.remove('uploaded');
+              uploadBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Upload Image';
+            }, 1500);
+
+            updateUploadStatus();
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+    }
+
+    function updateUploadStatus() {
+      const uploadedCount = Object.values(uploadedImages).filter(img => img !== null).length;
+      const placeholder = document.querySelector('#priorityQueue .placeholder');
+      if (placeholder && uploadedCount < 3) {
+        placeholder.innerHTML = `
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="2" y="3" width="20" height="14" rx="2"/>
+            <line x1="8" y1="21" x2="16" y2="21"/>
+            <line x1="12" y1="17" x2="12" y2="21"/>
+          </svg>
+          <p>📸 ${uploadedCount}/3 floors uploaded. Upload all floors then click ANALYZE.</p>
+        `;
+      } else if (uploadedCount === 3) {
+        if (placeholder) {
+          placeholder.innerHTML = `
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="1.5">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+            <p style="color: #10b981;">✅ All 3 floors uploaded! Click ANALYZE to process.</p>
+          `;
+        }
+      }
+    }
+
+    // 1. Send to backend (Includes stringified JSON catch)
+    async function sendToBackend(images) {
+      const formData = new FormData();
+
+      for (let floor of [0, 1, 2]) {
+        if (images[floor]) {
+          // Fallback to a custom name just in case the File object lost it
+          const fileName = images[floor].name || `floor_${floor}_upload.jpg`;
+          formData.append('files', images[floor], fileName);
+        }
+      }
+
+      try {
+        const response = await fetch(API_URL, {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        let result = await response.json();
+        // Safety catch: If backend returns a double-stringified JSON, parse it
+        if (typeof result === 'string') result = JSON.parse(result);
+
+        return result;
+      } catch (error) {
+        console.error('API Error:', error);
+        throw error;
+      }
+    }
+
+    // 2. Process Data (Includes the 'toArray' safety helper!)
+    function processAPIResponse(apiResult) {
+      console.log('🔄 Processing API Response:', apiResult);
+
+      // Helper function to guarantee we have an array to loop over (fixes the "not iterable" crash)
+      const toArray = (item) => {
+        if (!item) return [];
+        return Array.isArray(item) ? item : Object.values(item);
+      };
+
+      const priorityQueue = toArray(apiResult.priority_queue);
+      const yoloOutput = toArray(apiResult.yolo_output);
+      const finalDecision = toArray(apiResult.final_decision);
+      const order = apiResult.order || [0, 1, 2];
+      const scores = apiResult.scores || { 0: 0, 1: 0, 2: 0 };
+
+      // Build Priority Queue Display
+      if (priorityQueue.length) {
+        let priorityHTML = '<h4>📊 Priority Queue (by urgency score)</h4><ul>';
+        priorityQueue.forEach(item => {
+          priorityHTML += `<li>
+            <strong>${item.floorName || 'Unknown Floor'}</strong>
+            <span class="score">Score: ${item.score ?? 0}</span>
+            <span class="desc">${item.description || ''}</span>
+          </li>`;
+        });
+        priorityHTML += '</ul>';
+        document.getElementById('priorityQueue').innerHTML = priorityHTML;
+      }
+
+      // Build YOLO Detection Output Display
+      if (yoloOutput.length) {
+        let predictionsHTML = '<div class="prediction-grid">';
+        yoloOutput.forEach(floor => {
+          predictionsHTML += `
+            <div class="floor-prediction">
+              <strong>${floor.floorName || 'Unknown'}</strong>
+              <div class="persons-list">
+          `;
+
+          const persons = toArray(floor.persons);
+          if (persons.length > 0) {
+            persons.forEach(person => {
+              predictionsHTML += `
+                <span class="person-tag ${person.type || ''}">
+                  ${person.emoji || '👤'} ${person.class_name || 'Unknown'}: ${person.priority ?? 0}pts
+                </span>
+              `;
+            });
+          } else {
+            predictionsHTML += `<span class="person-tag">✨ No detections</span>`;
+          }
+
+          predictionsHTML += `
+              </div>
+              <div class="floor-score">🎯 Total Score: ${floor.totalScore ?? 0} pts</div>
+            </div>
+          `;
+        });
+        predictionsHTML += '</div>';
+        document.querySelector('#modelPredictions .prediction-content').innerHTML = predictionsHTML;
+      }
+
+      // Build Final Decision Display
+      if (finalDecision.length) {
+        let decisionHTML = '<div class="decision-steps">';
+        finalDecision.forEach(step => {
+          decisionHTML += `
+            <div class="step ${step.position === 1 ? 'first' : ''}">
+              <span class="step-num">${step.position ?? '-'}</span>
+              <span class="step-floor">${step.floorName || 'Unknown'}</span>
+              <span class="step-score">Priority Score: ${step.score ?? 0}</span>
+            </div>
+          `;
+        });
+        decisionHTML += '</div>';
+        document.querySelector('#finalDecision .decision-order').innerHTML = decisionHTML;
+      }
+
+      return {
+        order: order,
+        scores: scores,
+        priority_queue: priorityQueue,
+        yolo_output: yoloOutput,
+        final_decision: finalDecision
+      };
+    }
+
+    // 3. Main Analyze Function (Includes the Data Unwrapper and CORS catch)
+    async function analyzeImages() {
+      if (uploadedImages[0] === null || uploadedImages[1] === null || uploadedImages[2] === null) {
+        alert('Please upload all 3 floor images first!');
+        return;
+      }
+
+      const analyzeBtn = document.getElementById('analyzeBtn');
+      const originalText = analyzeBtn.innerHTML;
+      analyzeBtn.innerHTML = '⏳ Processing...';
+      analyzeBtn.disabled = true;
+
+      // Show loading states
+      document.getElementById('priorityQueue').innerHTML = '<div class="placeholder"><p>🔄 Sending to YOLO...</p></div>';
+      document.querySelector('#modelPredictions .prediction-content').innerHTML = '<div class="placeholder">⏳ Running detection...</div>';
+      document.querySelector('#finalDecision .decision-order').innerHTML = '<div class="placeholder">⏳ Calculating priority...</div>';
+
+      try {
+        const rawResponse = await sendToBackend(uploadedImages);
+        console.log('✅ Browser successfully received data:', rawResponse);
+
+        // 🛑 BULLETPROOF UNWRAPPING LOGIC 🛑
+        let actualData = rawResponse;
+        if (!actualData.priority_queue && !actualData.yolo_output) {
+          if (actualData.data) actualData = actualData.data;
+          else if (actualData.result) actualData = actualData.result;
+        }
+
+        if (typeof actualData.priority_queue === 'string') {
+          actualData.priority_queue = JSON.parse(actualData.priority_queue);
+          actualData.yolo_output = JSON.parse(actualData.yolo_output);
+          actualData.final_decision = JSON.parse(actualData.final_decision);
+        }
+
+        if (actualData.priority_queue || actualData.yolo_output || actualData.final_decision) {
+          analysisResult = processAPIResponse(actualData);
+          document.getElementById('simulateBtn').disabled = false;
+          analyzeBtn.style.background = '#10b981';
+          setTimeout(() => analyzeBtn.style.background = '', 1000);
+        } else {
+          throw new Error('Response is missing expected fields.');
+        }
+
+      } catch (error) {
+        console.error('❌ Frontend Error:', error);
+        if (error.message.includes("Failed to fetch") || error.message.includes("NetworkError")) {
+          document.getElementById('priorityQueue').innerHTML = `<div class="placeholder"><p style="color:#ef4444;">❌ CORS Error!</p><p style="font-size:0.8rem;">Your backend processed it, but the browser blocked it.</p></div>`;
+        } else {
+          document.getElementById('priorityQueue').innerHTML = `<div class="placeholder"><p style="color:#ef4444;">❌ Error: ${error.message}</p></div>`;
+        }
+      } finally {
+        analyzeBtn.innerHTML = originalText;
+        analyzeBtn.disabled = false;
+      }
+    }
+
+    function runSimulation() {
+      if (!analysisResult) {
+        alert('Please analyze first!');
+        return;
+      }
+
+      localStorage.setItem('liftSimulationData', JSON.stringify({
+        order: analysisResult.order,
+        scores: analysisResult.scores,
+        detections: analysisResult.detections,
+        mode: 'upload'
+      }));
+
+      window.location.href = 'simulation.html';
+    }
+
+    document.getElementById('analyzeBtn').addEventListener('click', analyzeImages);
+    document.getElementById('simulateBtn').addEventListener('click', runSimulation);
+  </script>
+</body>
+
+</html>

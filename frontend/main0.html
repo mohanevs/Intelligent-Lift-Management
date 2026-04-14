@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Live Capture Mode | Intelligent Lift</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="main-page">
+  <div class="bg-glow"></div>
+
+  <header class="main-header">
+    <div class="logo">INTELLIGENT LIFT MANAGEMENT <span>| Live Mode</span></div>
+    <a href="mode.html" class="back-link">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M19 12H5M12 19l-7-7 7-7" />
+      </svg>
+      Back to Modes
+    </a>
+  </header>
+
+  <main class="main-content">
+    <div class="floors-panel">
+      <!-- 2nd Floor -->
+      <div class="floor-card" data-floor="2">
+        <div class="floor-header">
+          <span class="floor-number">2nd Floor</span>
+          <span class="floor-badge">Top</span>
+        </div>
+        <div class="video-wrapper">
+          <video id="cam2" autoplay playsinline muted class="video-feed"></video>
+          <canvas id="canvas2" style="display: none;"></canvas>
+          <div class="capture-overlay" id="overlay2"></div>
+        </div>
+        <button class="capture-btn" data-floor="2">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10" />
+            <circle cx="12" cy="12" r="4" />
+          </svg>
+          Capture
+        </button>
+      </div>
+
+      <!-- 1st Floor -->
+      <div class="floor-card" data-floor="1">
+        <div class="floor-header">
+          <span class="floor-number">1st Floor</span>
+          <span class="floor-badge">Middle</span>
+        </div>
+        <div class="video-wrapper">
+          <video id="cam1" autoplay playsinline muted class="video-feed"></video>
+          <canvas id="canvas1" style="display: none;"></canvas>
+          <div class="capture-overlay" id="overlay1"></div>
+        </div>
+        <button class="capture-btn" data-floor="1">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10" />
+            <circle cx="12" cy="12" r="4" />
+          </svg>
+          Capture
+        </button>
+      </div>
+
+      <!-- Ground Floor -->
+      <div class="floor-card" data-floor="0">
+        <div class="floor-header">
+          <span class="floor-number">Ground Floor</span>
+          <span class="floor-badge">Bottom</span>
+        </div>
+        <div class="video-wrapper">
+          <video id="cam0" autoplay playsinline muted class="video-feed"></video>
+          <canvas id="canvas0" style="display: none;"></canvas>
+          <div class="capture-overlay" id="overlay0"></div>
+        </div>
+        <button class="capture-btn" data-floor="0">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10" />
+            <circle cx="12" cy="12" r="4" />
+          </svg>
+          Capture
+        </button>
+      </div>
+    </div>
+
+    <!-- Right Panel -->
+    <div class="analysis-panel">
+      <div class="panel-header">
+        <h3>🧠 AI Analysis Results</h3>
+        <button id="analyzeBtn" class="analyze-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          ANALYZE ALL
+        </button>
+      </div>
+
+      <div id="priorityQueue" class="priority-queue">
+        <div class="placeholder">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="2" y="3" width="20" height="14" rx="2" />
+            <line x1="8" y1="21" x2="16" y2="21" />
+            <line x1="12" y1="17" x2="12" y2="21" />
+          </svg>
+          <p>No captures yet. Click Capture on each floor, then Analyze.</p>
+        </div>
+      </div>
+
+      <div id="modelPredictions" class="model-predictions">
+        <h4>YOLO Detection Output</h4>
+        <div class="prediction-content">—</div>
+      </div>
+
+      <div id="finalDecision" class="final-decision">
+        <h4>🎯 Final Decision (Serving Order)</h4>
+        <div class="decision-order">—</div>
+      </div>
+
+      <button id="simulateBtn" class="simulate-btn" disabled>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polygon points="5 3 19 12 5 21 5 3" />
+        </svg>
+        RUN SIMULATION
+      </button>
+    </div>
+  </main>
+
+  <script>
+    const API_URL = 'http://127.0.0.1:8000/predict';
+
+    const videos = { 0: document.getElementById('cam0'), 1: document.getElementById('cam1'), 2: document.getElementById('cam2') };
+    const canvases = { 0: document.getElementById('canvas0'), 1: document.getElementById('canvas1'), 2: document.getElementById('canvas2') };
+    const overlays = { 0: document.getElementById('overlay0'), 1: document.getElementById('overlay1'), 2: document.getElementById('overlay2') };
+
+    let capturedImages = { 0: null, 1: null, 2: null };
+    let analysisResult = null;
+
+    // Start cameras
+    async function startCamera(floor) {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        videos[floor].srcObject = stream;
+        console.log(`✅ Camera started for floor ${floor}`);
+      } catch (err) {
+        console.error(`Camera error floor ${floor}:`, err);
+      }
+    }
+
+    startCamera(0);
+    startCamera(1);
+    startCamera(2);
+
+    function canvasToBlob(canvas) {
+      return new Promise((resolve) => {
+        canvas.toBlob((blob) => resolve(blob), 'image/jpeg', 0.8);
+      });
+    }
+
+    // Capture
+    document.querySelectorAll('.capture-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const floor = parseInt(btn.dataset.floor);
+        const video = videos[floor];
+        const canvas = canvases[floor];
+        const ctx = canvas.getContext('2d');
+
+        if (!video.videoWidth || !video.videoHeight) {
+          alert('Camera not ready yet.');
+          return;
+        }
+
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        capturedImages[floor] = await canvasToBlob(canvas);
+
+        overlays[floor].style.opacity = '0.3';
+        setTimeout(() => overlays[floor].style.opacity = '0', 200);
+
+        btn.classList.add('captured');
+        btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Captured!';
+        setTimeout(() => {
+          btn.classList.remove('captured');
+          btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg> Capture';
+        }, 1500);
+
+        updateCaptureStatus();
+      });
+    });
+
+    function updateCaptureStatus() {
+      const capturedCount = Object.values(capturedImages).filter(img => img !== null).length;
+      // const placeholder = document.querySelector('#priorityQueue .placeholder');
+      const pqDiv = document.getElementById('priorityQueue');
+      const placeholder = pqDiv.querySelector('.placeholder');
+      if (!placeholder) return;
+      if (placeholder && capturedCount < 3) {
+        placeholder.innerHTML = `<p>📸 ${capturedCount}/3 floors captured. Capture all then ANALYZE.</p>`;
+      } else if (capturedCount === 3 && placeholder) {
+        placeholder.innerHTML = `<p style="color: #10b981;">✅ All 3 floors captured! Click ANALYZE.</p>`;
+      }
+    }
+
+    // Send to backend (FIXED: Added filenames to Blob appends)
+    async function sendToBackend(images) {
+      const formData = new FormData();
+      for (let floor of [0, 1, 2]) {
+        if (images[floor]) {
+          // Backend APIs require a filename to parse the file correctly
+          formData.append('files', images[floor], `floor_${floor}.jpg`);
+        }
+      }
+
+      console.log('📤 Sending to backend...');
+      const response = await fetch(API_URL, { method: 'POST', body: formData });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+
+      let result = await response.json();
+
+      // Safety catch: If backend returns a double-stringified JSON, parse it
+      if (typeof result === 'string') {
+        result = JSON.parse(result);
+      }
+
+      console.log('📥 Raw backend response:', JSON.stringify(result, null, 2));
+      return result;
+    }
+
+    // Display results in UI (FIXED: Safely handles both Arrays and Objects)
+    function displayResults(data) {
+      console.log('🎨 Displaying results:', data);
+
+      // Helper function to guarantee we have an array to loop over
+      const toArray = (item) => {
+        if (!item) return [];
+        return Array.isArray(item) ? item : Object.values(item);
+      };
+
+      const pqData = toArray(data.priority_queue);
+      const yoloData = toArray(data.yolo_output);
+      const fdData = toArray(data.final_decision);
+
+      // 1. Priority Queue
+      if (pqData.length) {
+        let pqHtml = '<h4>📊 Priority Queue</h4><ul>';
+        pqData.forEach(item => {
+          pqHtml += `
+        <li>
+          <strong>${item.floorName || 'Unknown Floor'}</strong>
+          <span class="score">Score: ${item.score ?? 0}</span>
+          <span class="desc">${item.description || 'No description'}</span>
+        </li>`;
+        });
+        pqHtml += '</ul>';
+        const pqDiv = document.getElementById('priorityQueue');
+        pqDiv.innerHTML = pqHtml;
+      } else {
+        document.getElementById('priorityQueue').innerHTML = '<div class="placeholder"><p>⚠️ No priority queue data</p></div>';
+      }
+
+      // 2. YOLO Output
+      if (yoloData.length) {
+        let yoloHtml = '<div class="prediction-grid">';
+        yoloData.forEach(floor => {
+          yoloHtml += `
+    <div class="floor-prediction">
+      <strong>${floor.floorName || 'Unknown Floor'}</strong>
+      <div class="persons-list">`;
+
+          const personsData = toArray(floor.persons);
+          if (personsData.length) {
+            personsData.forEach(p => {
+              yoloHtml += `
+        <span class="person-tag ${p.type || ''}">
+          ${p.emoji || '👤'} ${p.class_name || 'Unknown'}: ${p.priority ?? 0}pts
+        </span>`;
+            });
+          } else {
+            yoloHtml += `<span class="person-tag">No detections</span>`;
+          }
+
+          yoloHtml += `
+          </div>
+          <div class="floor-score">Total: ${floor.totalScore ?? 0} pts</div>
+        </div>`;
+        });
+        yoloHtml += '</div>';
+        const yoloDiv = document.querySelector('#modelPredictions .prediction-content');
+        yoloDiv.innerHTML = yoloHtml;
+      } else {
+        document.querySelector('#modelPredictions .prediction-content').innerHTML = '<div class="placeholder">⚠️ No YOLO output</div>';
+      }
+
+      // 3. Final Decision
+      if (fdData.length) {
+        let fdHtml = '<div class="decision-steps">';
+        fdData.forEach(step => {
+          fdHtml += `
+        <div class="step ${step.position === 1 ? 'first' : ''}">
+          <span class="step-num">${step.position ?? '-'}</span>
+          <span class="step-floor">${step.floorName || 'Unknown'}</span>
+          <span class="step-score">Score: ${step.score ?? 0}</span>
+        </div>`;
+        });
+        fdHtml += '</div>';
+        const fdDiv = document.querySelector('#finalDecision .decision-order');
+        fdDiv.innerHTML = fdHtml;
+      } else {
+        document.querySelector('#finalDecision .decision-order').innerHTML = '<div class="placeholder">⚠️ No decision data</div>';
+      }
+    }
+
+    // Main analyze function (REPLACED WITH BULLETPROOF DATA UNWRAPPER)
+    async function analyzeImages() {
+      if (capturedImages[0] === null || capturedImages[1] === null || capturedImages[2] === null) {
+        alert('Please capture all 3 floors first!');
+        return;
+      }
+
+      const analyzeBtn = document.getElementById('analyzeBtn');
+      const originalText = analyzeBtn.innerHTML;
+      analyzeBtn.innerHTML = '⏳ Processing...';
+      analyzeBtn.disabled = true;
+
+      // Show loading states
+      document.getElementById('priorityQueue').innerHTML = '<div class="placeholder"><p>🔄 Sending to YOLO...</p></div>';
+      document.querySelector('#modelPredictions .prediction-content').innerHTML = '<div class="placeholder">⏳ Running detection...</div>';
+      document.querySelector('#finalDecision .decision-order').innerHTML = '<div class="placeholder">⏳ Calculating priority...</div>';
+
+      try {
+        const rawResponse = await sendToBackend(capturedImages);
+        console.log('✅ Browser successfully received data:', rawResponse);
+
+        // 🛑 BULLETPROOF UNWRAPPING LOGIC 🛑
+        // Sometimes backends wrap the response in {"data": ...} or {"result": ...}
+        let actualData = rawResponse;
+
+        if (!actualData.priority_queue && !actualData.yolo_output) {
+          if (actualData.data) actualData = actualData.data;
+          else if (actualData.result) actualData = actualData.result;
+        }
+
+        // Check if stringified again by accident
+        if (typeof actualData.priority_queue === 'string') {
+          actualData.priority_queue = JSON.parse(actualData.priority_queue);
+          actualData.yolo_output = JSON.parse(actualData.yolo_output);
+          actualData.final_decision = JSON.parse(actualData.final_decision);
+        }
+
+        console.log("🔍 Unwrapped Data ready for UI:", actualData);
+
+        // Check if we finally have the right structure
+        if (actualData.priority_queue || actualData.yolo_output || actualData.final_decision) {
+          setTimeout(() => {
+            displayResults(actualData);
+          }, 100);
+          analysisResult = actualData; // Save for simulation
+          document.getElementById('simulateBtn').disabled = false;
+          analyzeBtn.style.background = '#10b981';
+          setTimeout(() => analyzeBtn.style.background = '', 1000);
+        } else {
+          throw new Error('Response is still missing expected fields. Did the backend format change?');
+        }
+      } catch (error) {
+        console.error('❌ Frontend Error:', error);
+
+        // Check for CORS specifically
+        if (error.message.includes("Failed to fetch") || error.message.includes("NetworkError")) {
+          document.getElementById('priorityQueue').innerHTML = `<div class="placeholder"><p style="color:#ef4444;">❌ CORS Error!</p><p style="font-size:0.8rem;">Your backend processed it, but the browser blocked it. Add CORSMiddleware to your FastAPI app.</p></div>`;
+        } else {
+          document.getElementById('priorityQueue').innerHTML = `<div class="placeholder"><p style="color:#ef4444;">❌ Error: ${error.message}</p><p style="font-size:0.8rem;">Press F12 and check the Console tab.</p></div>`;
+        }
+      } finally {
+        analyzeBtn.innerHTML = originalText;
+        analyzeBtn.disabled = false;
+      }
+    }
+
+    function runSimulation() {
+      if (!analysisResult) {
+        alert('Please analyze first!');
+        return;
+      }
+      localStorage.setItem('liftSimulationData', JSON.stringify(analysisResult));
+      window.location.href = 'simulation.html';
+    }
+
+    document.getElementById('analyzeBtn').addEventListener('click', analyzeImages);
+    document.getElementById('simulateBtn').addEventListener('click', runSimulation);
+  </script>
+</body>
+
+</html>
