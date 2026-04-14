@@ -1,12 +1,4 @@
-Here is a sleek and professional README template tailored for your repository. You can copy and paste this directly into a `README.md` file in your repository.
-
------
-
 # 🏢 Intelligent Lift Management (ILM)
-
-[](https://www.google.com/search?q=https://www.python.org/)
-[](https://www.google.com/search?q=%23)
-[](https://www.google.com/search?q=%23)
 
 **Intelligent Lift Management (ILM)** is a computer vision-based system designed to revolutionize elevator operations in modern buildings. By leveraging the YOLO (You Only Look Once) object detection model for real-time human detection and a sophisticated priority-scoring algorithm, ILM minimizes wait times, improves accessibility, and maximizes the overall efficiency of lift dispatches.
 
