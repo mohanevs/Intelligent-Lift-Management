@@ -1,11 +1,14 @@
 from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
 from typing import List
 import shutil
 import os
 import uuid
-import uvicorn;
+import uvicorn
+
+FRONTEND_PATH = r"C:\Users\ASUS\Desktop\CV_Projects\frontend"
 
 # Your model imports
 import sys
@@ -24,7 +27,7 @@ app.add_middleware(
 
 @app.get("/")
 async def root():
-    return {"message": "Intelligent Lift API is running", "status": "healthy"}
+    return FileResponse(FRONTEND_PATH + "\\home.html")
 
 @app.get("/health")
 async def health():
@@ -60,6 +63,9 @@ def predict(files: List[UploadFile] = File(...)):
         os.remove(path)
 
     return JSONResponse(content=result)
+
+# Mount frontend static files LAST so all API routes above take priority
+app.mount("/", StaticFiles(directory=FRONTEND_PATH), name="frontend")
 
 if __name__ == "__main__":
     uvicorn.run(app, host="127.0.0.1", port=8000)
